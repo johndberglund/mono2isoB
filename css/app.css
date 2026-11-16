@@ -1,0 +1,457 @@
+:root {
+  --bg: #14151a;
+  --panel: #1c1e25;
+  --panel2: #23262f;
+  --border: #33363f;
+  --text: #e7e8ec;
+  --text-dim: #9aa0ad;
+  --accent: #4f9cff;
+  --good: #36c275;
+  --bad: #e0576e;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0; height: 100%;
+  background: var(--bg); color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 14px;
+}
+
+header {
+  padding: 8px 14px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+header .brand { font-size: 15px; font-weight: 700; margin-right: 4px; }
+
+/* ---------- selector row ---------- */
+#selectors {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  background: var(--panel2);
+  border-bottom: 1px solid var(--border);
+}
+#selectors label { color: var(--text-dim); font-size: 12px; }
+#selectors select, #selectors input {
+  background: #2b2e38; color: var(--text);
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 5px 8px; font: inherit;
+}
+#selectors select { max-width: 260px; }
+#idBox { width: 90px; text-align: center; font-family: ui-monospace, Consolas, monospace; }
+#selectors button.step {
+  width: 30px; height: 30px; line-height: 1;
+  border: 1px solid var(--border); background: #2b2e38; color: var(--text);
+  border-radius: 6px; cursor: pointer; font-size: 15px;
+}
+#selectors button.step:hover { background: #363944; }
+#idErr { color: var(--bad); font-size: 12px; display: none; }
+
+/* ---------- body: grid + card ---------- */
+main {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 0;
+  height: calc(100vh - 106px);
+}
+
+#gridWrap { overflow-y: auto; padding: 14px; }
+#gridCount { color: var(--text-dim); font-size: 12px; margin-bottom: 10px; }
+#grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 8px;
+}
+.cell {
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  padding: 3px;
+  background: var(--panel);
+  text-align: center;
+}
+.cell:hover { background: var(--panel2); }
+.cell.sel { border-color: var(--accent); background: var(--panel2); }
+.cell img {
+  width: 100%;
+  aspect-ratio: 276 / 330;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 4px;
+  display: block;
+}
+.cell .cap {
+  font: 11px ui-monospace, Consolas, monospace;
+  color: var(--text-dim);
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cell .cap .mark.X { color: var(--bad); }
+.cell .cap .mark.P { color: var(--good); }
+
+#empty { color: var(--text-dim); padding: 30px; text-align: center; }
+
+/* ---------- info card ---------- */
+#card {
+  border-left: 1px solid var(--border);
+  background: var(--panel);
+  overflow-y: auto;
+  padding: 16px;
+}
+#card .placeholder { color: var(--text-dim); margin-top: 30px; text-align: center; }
+
+#card .fig {
+  width: 100%;
+  aspect-ratio: 276 / 330;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 8px;
+  display: block;
+  margin-bottom: 12px;
+}
+#card h1 {
+  font-size: 18px;
+  margin: 0 0 4px;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+#card .meta {
+  color: var(--text-dim);
+  font-size: 12.5px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+#card .meta b { color: var(--text); font-weight: 600; }
+
+.chip {
+  display: inline-block;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+}
+/* Two chips for a possible type, matching the grid ticks (John, 2026-09-30): green only when an
+   ANISOHEDRAL example is known, yellow when the type tiles but we have found only isohedral combos.
+   .chip.P used to be green for every possible type, which claimed more than we know. */
+.chip.A { background: rgba(54,194,117,.18); color: var(--good); }
+.chip.P { background: rgba(216,177,58,.18); color: #d8b13a; }
+.chip.X { background: rgba(224,87,110,.18); color: var(--bad); }
+.chip.U { background: rgba(154,160,173,.18); color: var(--text-dim); }
+
+#card .why { line-height: 1.5; margin-bottom: 12px; }
+#card .proof img {
+  width: 100%;
+  border-radius: 8px;
+  background: #0d0f14;
+  border: 1px solid var(--border);
+  display: block;
+  margin-top: 8px;
+}
+#card .note {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  color: var(--text-dim);
+  margin-top: 10px;
+}
+
+dialog {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+}
+dialog::backdrop { background: rgba(0,0,0,.5); }
+dialog p { margin: 0 0 10px; line-height: 1.5; font-size: 13px; }
+dialog button { background: #2b2e38; color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 5px 12px; cursor: pointer; }
+
+@media (max-width: 900px) {
+  main { grid-template-columns: 1fr; height: auto; }
+  #card { border-left: none; border-top: 1px solid var(--border); }
+}
+
+/* ---------- anisohedral combo list on the card ---------- */
+#card h3 {
+  margin: 16px 0 2px; font-size: 11px; text-transform: uppercase;
+  letter-spacing: .05em; color: var(--text-dim);
+}
+#card .muted { color: var(--text-dim); }
+table.combos {
+  border-collapse: collapse;
+  font: 12px ui-monospace, Consolas, monospace;
+  width: 100%;
+}
+table.combos th {
+  text-align: right; color: var(--text-dim); font-weight: 600;
+  border-bottom: 1px solid var(--border); padding: 2px 6px;
+}
+table.combos td { text-align: right; padding: 2px 6px; border-bottom: 1px solid #23262f; }
+table.combos td:last-child, table.combos th:last-child { text-align: left; }
+.cnote {
+  display: inline-block; font-size: 10px; padding: 1px 5px; border-radius: 999px;
+  background: #33363f; color: var(--text-dim); cursor: help;
+}
+.cnote.red { background: rgba(224,87,110,.2); color: var(--bad); }
+/* verdict marks: green = tiles anisohedrally, yellow = tiles but no anisohedral example yet,
+   red = proven impossible, absent = unknown */
+.cell .cap .mark.A, #card .mark.A { color: var(--good); }
+.cell .cap .mark.P, #card .mark.P { color: #d8b13a; }
+/* ---------- per-type mini gallery ---------- */
+.minigal { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 4px; }
+.gtile { margin: 0; background: var(--panel2); border: 1px solid var(--border);
+         border-radius: 6px; padding: 3px; text-align: center; }
+.gtile.needs { border-color: #7a5ea8; }
+.gtile svg { display: block; background: #12141a; border-radius: 4px; }
+.gtile figcaption { font: 10px ui-monospace, Consolas, monospace; color: var(--text-dim); margin-top: 2px; }
+.gtile .cv { color: #b79bdd; }
+.gtile .nodraw { width: 96px; height: 96px; display: flex; align-items: center;
+                 justify-content: center; font-size: 10px; color: var(--text-dim); }
+.gtoggle { display: block; font-size: 12px; color: var(--text); margin: 2px 0 10px; }
+
+
+/* ---------- mode bar (John, 2026-09-30: four modes) ---------- */
+#modebar { display:flex; gap:2px; padding:6px 14px 0; border-bottom:1px solid var(--border); }
+#modebar button { font:600 13px/1 system-ui,sans-serif; padding:9px 16px; border:1px solid var(--border);
+  border-bottom:none; border-radius:7px 7px 0 0; background:transparent; color:var(--text-dim);
+  cursor:pointer; position:relative; top:1px; }
+#modebar button:hover { color:var(--fg); }
+#modebar button.on { background:var(--card); color:var(--fg); border-bottom:1px solid var(--card); }
+#stub { padding:22px 26px; max-width:760px; }
+#stub h2 { font:600 17px/1.3 system-ui,sans-serif; margin:0 0 10px; }
+.stub-what { font:14px/1.6 system-ui,sans-serif; margin:0 0 14px; }
+.stub-plan { font:13px/1.7 system-ui,sans-serif; margin:0 0 16px; padding-left:22px; }
+.stub-plan li { margin:3px 0; }
+.stub-note { font:12px/1.6 system-ui,sans-serif; color:var(--text-dim);
+  border-left:3px solid var(--border); padding-left:10px; }
+
+/* the "it does tile" tile, beside the card body -- the yellow-check counterpart of a proof image */
+#card .isoeg { float:right; width:124px; margin:0 0 8px 14px; text-align:center; }
+#card .isoeg svg { border:1px solid var(--border); border-radius:8px; background:var(--card); }
+#card .isoeg .lbl { font:11px/1.4 system-ui,sans-serif; color:var(--text-dim); margin-top:3px; }
+
+
+/* ---- Explore workspace (slice 1: choosing a combo) --------------------------------------------- */
+#explore { padding: 10px 16px 40px; }
+#exHead { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+#exHead h1 { font-size: 20px; margin: 0; }
+#exBack { padding: 4px 10px; }
+.exStep { margin-top: 18px; }
+.exStep h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+             margin: 0 0 8px; color: var(--muted); }
+.exStep h2 .muted { text-transform: none; letter-spacing: 0; font-weight: 400; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip-m { padding: 6px 12px; font-size: 15px; display: flex; align-items: baseline; gap: 5px; }
+.chip-m small { font-size: 10px; color: var(--muted); }
+.chip-m.on { background: var(--accent); color: #06121f; border-color: var(--accent); }
+.chip-m.on small { color: #06121f; opacity: .75; }
+.exLegend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+.exLegend span { display: flex; align-items: center; gap: 5px; }
+.exLegend i.cell { width: 12px; height: 12px; display: inline-block; border-radius: 2px; }
+/* the legend's letter swatches: same size as the grid's cells so the glyph reads the same */
+.exLegend i.cell.mk { width: 16px; height: 16px; font: 9px/16px ui-monospace, Consolas, monospace;
+                      color: #06121f; text-align: center; font-style: normal; }
+.exGrid { overflow: auto; max-height: 52vh; border: 1px solid var(--border); border-radius: 6px; }
+.exGrid table { border-collapse: collapse; font-size: 11px; }
+.exGrid th { position: sticky; top: 0; background: var(--panel); color: var(--muted);
+             font-weight: 500; padding: 3px 4px; z-index: 1; }
+.exGrid th.si, .exGrid th.sum { position: sticky; left: 0; z-index: 2; text-align: left; }
+.exGrid td.sum { position: sticky; left: 0; background: var(--panel); color: var(--muted);
+                 padding: 2px 8px 2px 4px; white-space: nowrap; }
+.exGrid tbody th.si { left: 0; background: var(--panel); }
+.exGrid tr.on td.sum, .exGrid tr.on th.si { color: var(--fg); }
+.exGrid td.cell { width: 16px; height: 16px; cursor: pointer; border: 1px solid var(--bg);
+                  text-align: center; font-size: 9px; color: #06121f; }
+.exGrid td.sep, .exGrid th.sep { border-left: 2px solid var(--muted); }
+.cell.live   { background: #9ec5fe; }
+.cell.red    { background: #4a5566; }
+.cell.imp    { background: #b3485a; }
+.cell.nodata { background: #2a3340; }
+.exGrid td.cell.sel { outline: 2px solid var(--accent); outline-offset: -2px; }
+.exPick { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.exVerdict { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.exVerdict .why { font-size: 12px; max-width: 70ch; }
+.exShape { margin-top: 10px; }
+.exShape .lbl { font-size: 11px; color: var(--muted); }
+.exOpen { margin: 8px 0 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.exNote.bad { color: #ff9c9c; }
+
+
+/* ---- Explore slice 2: the live tile ------------------------------------------------------------ */
+.exWork { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+#exTileBox { border: 1px solid var(--border); border-radius: 6px; background: #0e131a; line-height: 0; }
+.exCtl { min-width: 340px; max-width: 520px; flex: 1; }
+.exMode { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+.exMode label { cursor: pointer; }
+.exHint { margin: 4px 0; font-size: 12px; }
+.exCtl .row { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+.exCtl .row label { width: 70px; font-size: 12px; color: var(--muted); }
+.exCtl .row input[type=range] { flex: 1; }
+.exCtl .row input.val { width: 74px; }
+.exCtl h3 { font-size: 12px; margin: 12px 0 2px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+.exGap { color: #ff8a8a; font-size: 12px; }
+.exClosed { color: #6fcf97; font-size: 12px; }
+.exTable { border-collapse: collapse; font-size: 11px; margin-top: 12px; }
+.exTable th, .exTable td { padding: 2px 10px 2px 0; text-align: left; font-variant-numeric: tabular-nums; }
+.exTable th { color: var(--muted); font-weight: 500; }
+
+
+/* curve editing */
+.exOrbits { margin: 6px 0; }
+.exOrbits .chip-m small { font-size: 10px; }
+#exTileBox svg circle.cvh { pointer-events: all; }
+
+
+/* the tiling view */
+.exPad { padding: 24px; width: 520px; box-sizing: border-box; line-height: 1.5; }
+
+/* a visitor's own searches, never shown as part of the published record */
+.why.mine { border-left: 3px solid var(--accent); padding-left: 8px; }
+
+/* pictures that open their combo */
+.opens { cursor: pointer; }
+.opens:hover { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+/* ---------- gallery: tiles left, the chosen tile’s tilings right ---------- */
+#gallery {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  height: calc(100vh - 106px);
+}
+#galBody { overflow-y: auto; padding: 14px 16px 40px; }
+#galPanel {
+  border-left: 1px solid var(--border);
+  background: var(--panel);
+  overflow-y: auto;
+  padding: 16px;
+}
+#galPanel .placeholder { color: var(--text-dim); margin-top: 30px; text-align: center; }
+#galPanel .meta { color: var(--text-dim); font-size: 12px; margin: 8px 0 10px; }
+#galPanel .meta b { color: var(--text); font-weight: 600; }
+#galPanel h3 { font-size: 13px; margin: 14px 0 2px; }
+#galPanel .why { line-height: 1.5; margin-bottom: 8px; font-size: 12px; }
+#galPanel .muted { color: var(--text-dim); }
+#galPanel .cv { color: #b79bdd; }
+#galPanel .galHint { font-size: 12px; margin-bottom: 6px; }
+.galBig { text-align: center; }
+.galBig svg { background: #12141a; border: 1px solid var(--border); border-radius: 8px; }
+.galHead { color: var(--text-dim); font-size: 12px; margin-bottom: 12px; line-height: 1.5; }
+.galSec { margin-bottom: 4px; }
+.galToggle {
+  background: none; border: 0; color: var(--text); cursor: pointer;
+  font: 14px/1.6 system-ui, sans-serif; padding: 4px 0; text-align: left; width: 100%;
+}
+.galToggle:hover { color: var(--accent); }
+.galToggle .caret { color: var(--text-dim); display: inline-block; width: 14px; }
+.galToggle .muted { color: var(--text-dim); font-size: 12px; font-weight: 400; }
+.galNote { font-size: 12px; margin: 0 0 6px 14px; }
+.galGrid { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 14px 14px; }
+.gtile.on { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+tr.galRow { cursor: pointer; }
+tr.galRow:hover td { background: #23262f; }
+tr.galRow.isrep td { color: var(--text); }
+@media (max-width: 900px) { #gallery { grid-template-columns: 1fr; height: auto; } }
+
+/* hidden means hidden.
+   The browser hides [hidden] with display:none at specificity (0,1,0), which an ID rule carrying its own
+   display beats -- so #selectors{display:flex} and #gallery{display:grid} stayed on screen with the
+   attribute set, and setMode looked broken while the DOM said it had worked. #selectors had been doing
+   this since the stub modes were added: Copy tiling showed the type toolbar it had just asked to hide. */
+[hidden] { display: none !important; }
+
+/* the gallery panel is 380px wide and the table has seven columns */
+#galPanel table.combos { width: 100%; }
+#galPanel table.combos td, #galPanel table.combos th { white-space: nowrap; padding: 3px 4px; }
+tr.galRow.isrep td:first-child { border-left: 3px solid var(--accent); padding-left: 3px; }
+
+.galHead .gtoggle { display: block; margin-top: 8px; cursor: pointer; }
+.galHead .gtoggle input { vertical-align: -1px; margin-right: 4px; }
+
+/* a swept size is a settled catalogue; a partly-searched one is not */
+.galToggle.swept b { color: var(--good); }
+
+/* ---------- copy tiling ---------- */
+#copy { padding: 10px 16px 40px; overflow-y: auto; height: calc(100vh - 106px); }
+.copyIntro { font-size: 12px; line-height: 1.6; max-width: 70ch; margin-bottom: 12px; }
+.copyRow { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.copyRow label { color: var(--text-dim); font-size: 12px; min-width: 72px; }
+.copyRow input { background: var(--panel2); border: 1px solid var(--border); color: var(--text);
+  border-radius: 4px; padding: 4px 6px; font: 13px ui-monospace, Consolas, monospace; }
+.copyFound { margin: 14px 0 8px; font-size: 13px; }
+.copyGrid { display: flex; flex-wrap: wrap; gap: 6px; }
+.copyGrid .gtile.warn { border-color: #7a5ea8; }
+#copyBody .nodraw { width: 104px; height: 104px; display: flex; align-items: center;
+  justify-content: center; text-align: center; color: var(--text-dim); font-size: 10px;
+  background: #12141a; border-radius: 4px; }
+
+/* explore: paging the sum-type grid, and the compact bar that replaces it while editing */
+.exPager { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 6px 0 8px; font-size: 12px; }
+.exPager button { background: var(--panel2); border: 1px solid var(--border); color: var(--text);
+  border-radius: 4px; padding: 3px 9px; cursor: pointer; }
+.exPager button:disabled { opacity: .4; cursor: default; }
+.exJump { display: inline-flex; align-items: center; gap: 6px; }
+.exJump label { color: var(--text-dim); }
+.exJump input { width: 86px; background: var(--panel2); border: 1px solid var(--border); color: var(--text);
+  border-radius: 4px; padding: 3px 6px; font: 12px ui-monospace, Consolas, monospace; }
+.exPicked { font: 13px ui-monospace, Consolas, monospace; display: flex; align-items: center; gap: 12px; }
+.exPicked button { background: var(--panel2); border: 1px solid var(--border); color: var(--text);
+  border-radius: 4px; padding: 3px 9px; cursor: pointer; font-family: system-ui, sans-serif; }
+
+/* gallery: tiles grouped by the criterion they satisfy */
+.galCritGroup { margin: 0 0 14px; }
+.galCritHead { font-size: 12px; color: var(--text); margin: 2px 0 4px; }
+.galCritHead .muted { color: var(--text-dim); font-family: ui-monospace, Consolas, monospace; }
+
+/* gallery: tiles arranged by containment (general form, then what it contains) */
+/* a group is a BLOCK, not a flex item: .galGrid wraps its children side by side, which squeezed
+   each containment group into a narrow column */
+.galContGroup { flex: 0 0 100%; width: 100%; margin: 0 0 16px; padding-left: 8px;
+  border-left: 2px solid var(--border); display: flex; flex-wrap: wrap; gap: 6px; }
+.galContHead { flex: 0 0 100%; }
+.galContHead { font-size: 12px; color: var(--text); margin: 2px 0 5px; }
+.galContHead .muted { color: var(--text-dim); }
+.galWhy { color: #d8a657; font-style: italic; display: inline-block; margin-top: 2px; }
+
+/* Explore: zoom buttons (John, 2026-10-16). A tight group so - 1x + read as one control. */
+.exZoomBox { display: inline-flex; align-items: center; gap: 4px; }
+.exZoomBox button { min-width: 30px; padding: 2px 8px; }
+#exZoomLbl { min-width: 44px; text-align: left; margin-left: 4px; }
+#exTileBox { cursor: default; }
+
+/* Explore: the Reduce button lights up when the combo really has redundant vertices (John, 2026-10-16). */
+#exReduce.exReducible { border-color: #d8a657; color: #f0c674; }
+#exReduce:disabled { opacity: 0.6; cursor: progress; }
+
+/* Explore grid: a combo marked A (anisohedral) is green, I (isohedral) yellow -- the same colours as the ticks and the card
+   pictures (John, 2026-10-17). A '?' stays the plain live blue. */
+.cell.live.mkA, .exGrid td.cell.mkA, .exLegend i.cell.mkA { background: var(--good); color: #06210f; }
+.cell.live.mkI, .exGrid td.cell.mkI, .exLegend i.cell.mkI { background: #d8b13a; color: #261d02; }
+
+/* ---- the whole gallery as a PDF (js/gallery.js printAll / program7/export_gallery_pdf.js) ---------------------------------- */
+#galPrint { display: none; }
+body.galPrinting > *:not(#galPrint) { display: none !important; }
+body.galPrinting #galPrint { display: block; background: #fff; color: #111; padding: 6mm; font: 10pt system-ui, sans-serif; }
+#galPrint h1 { font-size: 18pt; margin: 0 0 2mm; }
+#galPrint .prLead, #galPrint .prNote { font-size: 8.5pt; color: #444; margin: 0 0 3mm; line-height: 1.4; }
+#galPrint h2 { font-size: 12pt; margin: 6mm 0 1.5mm; break-after: avoid; border-bottom: 0.3mm solid #999; }
+#galPrint h2 span { font-size: 8.5pt; font-weight: 400; color: #555; }
+#galPrint .prGrid { display: flex; flex-wrap: wrap; gap: 1.5mm; }
+#galPrint .prFig { margin: 0; width: 30mm; break-inside: avoid; text-align: center; }
+#galPrint .prFig svg { display: block; width: 30mm; height: 30mm; background: #fff; border: 0.2mm solid #bbb; }
+#galPrint .prFig figcaption { font: 6.5pt ui-monospace, Consolas, monospace; color: #333; margin-top: 0.5mm; }
+#galPrint .nodraw { width: 30mm; height: 30mm; font-size: 7pt; color: #999; }
+@page { size: 8.5in 11in; margin: 0.4in; }              /* US Letter (John, 2026-10-20). A browser print dialog can still override it. */
+@media print { body.galPrinting { background: #fff; } }

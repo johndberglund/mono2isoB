@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>mono2iso — choose a type</title>
+<link rel="stylesheet" href="css/menu.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<header>
+  <span class="brand">mono2iso</span>
+  <nav id="menubar">
+    <ul>
+      <li>
+        <button type="button">File</button>
+        <ul>
+          <li><button type="button" id="copyLink">Copy link to this type</button></li>
+          <li><button type="button" id="copyComboLink">Copy link to this combo</button><span class="hint">opens Explore on it, with the gallery's shape and curves</span></li>
+          <li><button type="button" id="copyShapeLink">Copy link with this shape and curves</button><span class="hint">exactly what is on screen, curves included</span></li>
+          <li><button type="button" id="saveCombo">Save combo…</button><span class="hint">the open combo, as a .json file</span></li>
+          <li><button type="button" id="loadCombo">Load combo…</button><span class="hint">open a saved .json file</span></li>
+          <li><button type="button" id="saveSvg">Save SVG…</button><span class="hint">the picture as drawn</span></li>
+          <li><button type="button" id="savePng">Save PNG…</button><span class="hint">the picture as drawn</span></li>
+          <li role="separator"></li>
+          <li><button type="button" id="saveMine">Save your searches…</button><span class="hint">everything this browser has searched, as one file to send</span></li>
+          <li><button type="button" id="clearMine">Forget your searches</button><span class="hint">empties this browser's own record</span></li>
+          <!-- a Load needs a real file input; it is never shown -->
+          <li hidden><input type="file" id="comboFile" accept=".json,application/json"></li>
+        </ul>
+      </li>
+      <li>
+        <button type="button">Help</button>
+        <ul>
+          <li><button type="button" id="showAbout">About</button></li>
+          <li><button type="button" id="showKeys">Keyboard shortcuts</button></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<!-- Four modes (John, 2026-09-30). Only `explore`'s type picker exists today; the other three are
+     stubs that say what they will do, so the shape of the app is visible before the work lands. -->
+<nav id="modebar" role="tablist" aria-label="mode">
+  <!-- Order set by John, 2026-10-01: explore, copy tiling, gallery, deep search -- explore is the
+       default on startup, and it is first because it is where you land. -->
+  <button type="button" role="tab" data-mode="explore" aria-selected="true" class="on">Explore</button>
+  <button type="button" role="tab" data-mode="copy">Copy tiling</button>
+  <button type="button" role="tab" data-mode="gallery">Gallery</button>
+  <button type="button" role="tab" data-mode="deep">Deep search</button>
+</nav>
+
+<div id="selectors">
+  <label>k_q n_r</label>
+  <select id="sigSel"></select>
+  <label>orbifold</label>
+  <select id="orbSel"></select>
+  <label>match</label>
+  <select id="typeSel"></select>
+  <label>sort</label>
+  <select id="sortSel" title="browsing order for the list and grid">
+    <option value="tegula">Tegula #</option>
+    <option value="paper">paper order (page, position)</option>
+    <option value="verdict">verdict, then Tegula #</option>
+  </select>
+  <span style="border-left:1px solid var(--border);height:20px"></span>
+  <label>Tegula #</label>
+  <input id="idBox" placeholder="id" title="Tegula type number — Enter to jump">
+  <button class="step" id="prevBtn" title="previous id (←)">◀</button>
+  <button class="step" id="nextBtn" title="next id (→)">▶</button>
+  <span id="idErr"></span>
+</div>
+
+<!-- Explore's workspace. Hidden until a type is opened from its card; it then takes the whole width,
+     and <main> (the grid + card) is hidden behind it. -->
+<!-- Deep search: one type over a range of sizes, run in the browser by the same frozen finder. -->
+<section id="deep" hidden>
+  <div id="exHead"><h1>Deep search</h1></div>
+  <div id="deepBody"></div>
+</section>
+
+<!-- Gallery: every anisohedral tile we have found, by section, each expandable. Its data loads on first
+     entry (839 KB) rather than on every page view. -->
+<!-- Copy tiling: identify the combo behind a tiling you are looking at, from its per-orbit side sizes. -->
+<section id="copy" hidden>
+  <div id="copyBody"></div>
+</section>
+
+<section id="gallery" hidden>
+  <div id="galBody"></div>
+  <div id="galPanel"></div>
+</section>
+
+<section id="explore" hidden>
+  <div id="exHead">
+    <button id="exBack" title="back to the type picker">&larr; types</button>
+    <h1 id="exTitle"></h1>
+  </div>
+  <div id="exBody"></div>
+</section>
+
+<main>
+  <div id="gridWrap">
+    <div id="gridCount"></div>
+    <div id="grid"></div>
+    <div id="empty" hidden>nothing matches this filter</div>
+  </div>
+  <div id="card">
+    <div class="placeholder">Pick a type — by sides, orbifold, picture, or a Tegula id.</div>
+  </div>
+</main>
+
+<dialog id="aboutDlg" style="max-width:480px">
+  <p><b>mono2iso</b> — 2-isohedral monohedral tiling explorer, slice 1: choosing a type.</p>
+  <p>1270 Tegula types. Figures and classification from Delgado, Huson &amp; Zamorzaeva,
+     "The classification of 2-isohedral tilings of the plane."</p>
+  <form method="dialog"><button>close</button></form>
+</dialog>
+
+<dialog id="keysDlg" style="max-width:420px">
+  <p><b>← / →</b> — previous / next type by Tegula id (wraps)</p>
+  <p><b>Enter</b> in the id box — jump to that id</p>
+  <p><b>Esc</b> — close an open menu</p>
+  <form method="dialog"><button>close</button></form>
+</dialog>
+
+<section id="stub" hidden>
+  <h2 id="stubTitle"></h2>
+  <p id="stubWhat" class="stub-what"></p>
+  <ul id="stubPlan" class="stub-plan"></ul>
+  <p class="stub-note">Not built yet — this panel describes what the mode will do, so the shape of the
+     app can be reviewed before the work lands. <b>Explore</b> has a working type picker today.</p>
+</section>
+
+<!-- aniso.js reads these six inputs directly out of the DOM: specify() and findSumWays() take their
+     arguments this way rather than as parameters. They are not UI here, so they are hidden, but they
+     cannot be dropped -- without them findSumWays throws "Cannot read properties of null (reading
+     'value')" and nothing in the engine runs. In node, test_harness.js stubs document.getElementById
+     to return objects with a .value for exactly this reason.
+     If the engine is ever refactored to pass these as arguments (see "expose data, don't just print
+     it"), this block is what should disappear. -->
+<div id="anisoInputs" hidden>
+  <input id="tileType"><input id="tileLeng"><input id="sumType"><input id="offset">
+  <input id="orient" type="checkbox"><input id="findAll" type="checkbox">
+</div>
+
+<!-- The engine, synced from program7/finder/lib by program7/app_tools/sync_engine.js (--check detects drift).
+     program7 owns its engine; program8 is downstream of program7, not of program4/engine.
+     allTypes.js must be FIRST -- it declares the globals aniso.js writes at load time.
+     aniso_fast.js ONLY: aniso.js is not in the tree, so it cannot be loaded by mistake. -->
+<script src="js/allTypes.js"></script>
+<script src="js/templates.js"></script>
+<script src="js/aniso_fast.js"></script>
+<script src="js/tiler_core.js"></script>
+<script src="js/tiling_checks.js"></script>
+<script src="js/angle_algebra.js"></script>
+<script src="js/tile_symmetry.js"></script>
+<script src="js/tiler_curves.js"></script>
+<script src="js/curve_designer.js"></script>
+<script src="js/tile_designer.js"></script>
+<script src="js/curve_sides.js"></script>
+<script src="js/isohedral_criteria.js"></script>
+<script src="js/isohedral_criteria_fast.js"></script>
+<script src="js/isohedral_block.js"></script>
+<script src="js/dd_patch.js"></script>
+<script src="js/lattice_draw.js"></script>
+<script src="js/cells_map.js"></script>
+<script src="js/tiler_svg.js"></script>
+<!-- The app's own code and data, AFTER the engine. render.js and iso_examples.js are what draw the
+     "it does tile" tile on a yellow type's card: isoEgHtml() needs window.Render and
+     window.ISO_EXAMPLES, and with either missing it returns '' and the tile disappears without any
+     error -- which is exactly what happened when a rebuild of this block dropped them. -->
+<script src="js/local_store.js"></script>   <!-- the searches YOU ran, kept in this browser -->
+<script src="js/render.js"></script>
+<script src="js/combo_reduce.js"></script>   <!-- reduce a padded combo to its fewer-sided form; posted into the workers like curve_sizing -->
+<script src="js/curve_sizing.js"></script>   <!-- the same module the exporter uses; its source is posted into each worker -->
+<script src="js/finder_pool.js"></script>   <!-- runs the frozen finder in Web Workers; the 1.4 MB bundle loads on first use -->
+<script src="data/iso_examples.js"></script>
+<script src="data/iso_shapes.js"></script>   <!-- saved shapes+curves for hard-to-curve isohedral tiles; Explore opens a combo on its record -->
+<script src="data/types.js"></script>
+<script src="data/app_store.js"></script>        <!-- what the app needs FROM the store: 257 KB, generated by program7/export_app_store.js -->
+<!-- data/aniso_shapes.js (982 KB) is NOT loaded here: only a green type's combo list draws from it, so
+     js/picker.js pulls it in the first time one is opened. That halves the first page view. -->
+<script src="js/gallery.js"></script>
+<script src="js/copy.js"></script>
+<script src="js/explore.js"></script>
+<script src="js/deep.js"></script>
+<script src="js/picker.js"></script>
+</body>
+</html>
